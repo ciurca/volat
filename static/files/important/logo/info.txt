@@ -1,0 +1,14 @@
+
+Hope you enjoy your new logo, here are the people that
+made your beautiful logo happen :)
+font name: LeagueSpartan-Bold
+font link: https://www.theleagueofmoveabletype.com/league-spartan
+font author: The League of Moveable Type
+font author site: https://www.theleagueofmoveabletype.com/
+
+
+icon designer: Kieu Thi Kim Cuong
+icon designer link: /kieukimcuong
+        
+{"bg":"#00acff","icon":"#010033","font":"#ffffff","slogan":"#ffffff"}
+      

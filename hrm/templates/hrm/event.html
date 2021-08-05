@@ -1,0 +1,50 @@
+{% extends 'hrm/main.html' %}
+{% block content %}
+<h1>{{event.title}}</h1>
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+       <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
+        {% else %}
+       <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
+        {% endif %}
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div> 
+    {% endfor %}
+{% endif %}
+{% if user.is_staff %}
+<p>Total volunteers: {{event.volunteers.count}}</p>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">First</th>
+        <th scope="col">Last</th>
+        <th scope="col">Username</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for volunteer in event.volunteers.all %}
+      <tr>
+        <th scope="row">{{volunteer.id}}</th>
+        <td>{{volunteer.first_name}}</td>
+        <td>{{volunteer.last_name}}</td>
+        <td>@{{volunteer.user}}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+<form action="{% url 'generateContract' event.id %}" method='get'>
+  <button type='submit' class="btn btn-primary btn-sm">Generate contract</button>
+</form>
+<br>
+{% for contract in contract_list %}
+    {% if contract.event == event %}
+      <p> Contract {{contract}}: <a href="{{ contract.file.url }}" download><button class="btn btn-primary btn-sm">Download <i class="bi bi-download"></i></button></a>
+    {% endif %}
+    {% empty %}
+    No contract
+{% endfor %}
+{% endblock %}

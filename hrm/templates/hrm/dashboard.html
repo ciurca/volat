@@ -1,0 +1,61 @@
+{% extends 'hrm/main.html' %}
+{% block content %}
+<h1>Welcome to the dashboard.</h1>
+{% if user.is_staff %}
+<div class="row">
+	<div class="col">
+		<div class="col-md-15">
+			<div class="card text-center text-white bg-primary mb-3">
+			  	<div class="card-header">
+			  		<h5 class="card-title">Total Volunteers</h5>
+			  	</div>
+			  	<div class="card-body">
+			    	<h3 class="card-title">{{total_volunteers}}</h3>
+			  	</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col">
+		<div class="col-md">
+			<div class="card text-center text-white bg-primary mb-3" id="orders-pending">
+			  	<div class="card-header">
+			  		<h5 class="card-title">Total Events</h5>
+			  	</div>
+			  	<div class="card-body">
+			    	<h3 class="card-title">{{total_events}}</h3>
+			  	</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col">
+		<div class="col-md">
+			<div class="card text-center text-white bg-primary mb-3" id="orders-pending">
+			  	<div class="card-header">
+			  		<h5 class="card-title">Total Organizers</h5>
+			  	</div>
+			  	<div class="card-body">
+			    	<h3 class="card-title">{{total_organizers}}</h3>
+			  	</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}
+<h3>Events</h3>
+<div class="row row-cols-1 row-cols-md-2 g-4">
+{% for event in events %}
+<div class="col">
+    <div class="card">
+        <div class="card-header"><i class="bi bi-building"></i> {{event.organizer}}</div>
+        <div class="card-body">
+            <h5 class="card-title">{{event.title}}</h5>
+            <p class="card-text">Total volunteers: {{event.volunteers.count}}</p>
+            <a href="{% url 'event' event.id %}" class="btn btn-primary">More information</a>
+        </div>
+    </div>
+</div>
+{% endfor %}
+</div>
+{% endblock %}

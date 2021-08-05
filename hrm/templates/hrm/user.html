@@ -1,0 +1,30 @@
+{% extends 'hrm/main.html' %}
+{% block content %}
+
+<h1>User Profile</h1>
+<p>Go to <a href="{% url 'account-settings' %}">account settings.</a></p>
+<title>Volunteer - {{request.user.volunteer.first_name}} {{ volunteer.last_name }}</title> 
+<h1> {{request.user.volunteer.first_name}} {{ request.user.volunteer.last_name }} </h1>
+<p> First Name: {{ request.user.volunteer.first_name }} </p>
+<p> Last Name: {{ request.user.volunteer.last_name }} </p>
+<p> Birth Date: {{ request.user.volunteer.birth_date }} </p>
+<p> Place of residence: {{ request.user.volunteer.residence }}</p>
+<p> Occupation: {{ request.user.volunteer.occupation }}</p>
+<p> Languages spoken: {{ request.user.volunteer.languages_spoken }}</p>
+<p> Email: <a href="mailto:{{ request.user.volunteer.email }}">{{ request.user.volunteer.email}}</a></p>
+<p> Phone number: {{ request.user.volunteer.phone_number }}</p>
+<p> Department: {{ request.user.volunteer.departments }}</p>
+<p> Facebook: <a href="{{ request.user.volunteer.fb_link }}" target="_blank">{{ request.user.volunteer.first_name }} {{ request.user.volunteer.last_name }}</a></p>
+{% if request.user.volunteer.contract %}
+<p> Contract: <a href="{{ request.user.volunteer.contract.url }}" download><button class="btn btn-primary btn-sm">Download <i class="bi bi-download"></i></button></a>
+<!-- <form action='sendMail' method='get'>
+<button type='submit' class="btn btn-primary btn-sm">Send mail</button>
+</form> -->
+</p>
+{% else %}
+<!-- <form action='generateContract' method='get'>
+<button type='submit' class="btn btn-primary btn-sm">Generate contract</button>
+</form> -->
+<p>No contract</p>
+{% endif %}
+{% endblock content %}
