@@ -24,6 +24,8 @@
         <label for="password">Password</label>
       </div>
         <div class="form-text">
+        <a href="{% url 'password_reset' %}">Forgot your password?</a>
+        <br>
         Don't have an account? <a href="{% url 'register' %}">Sign up</a>.
         </div>
   <button type="submit" class="btn btn-primary">Login</button>
