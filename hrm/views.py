@@ -3,7 +3,7 @@ import time as t
 from datetime import datetime
 
 from django.core.mail import send_mail, BadHeaderError
-from volat.settings import BASE_DIR
+from volat.settings import BASE_DIR, DEBUG, DEFAULT_FROM_EMAIL
 from django import contrib
 from django.core.files.base import File
 from django.shortcuts import get_object_or_404, render, redirect
@@ -192,6 +192,7 @@ def generateContract(request, event_id):
 			return HttpResponseRedirect(reverse('event', args=(event.id,)))
 	return HttpResponseRedirect(reverse('event', args=(event.id,)))
 
+@unauthenticated_user
 def password_reset_request(request):
 	if request.method == "POST":
 		password_reset_form = PasswordResetForm(request.POST)
@@ -202,22 +203,26 @@ def password_reset_request(request):
 				for user in associated_users:
 					subject = "Password Reset Requested"
 					email_template_name = "password/password_reset_email.txt"
+					if DEBUG == True:
+						mail_domain = '127.0.0.1:8000'
+					else:
+						mail_domain = 'volat.xyz'
 					c = {
 					"email":user.email,
-					'domain':'127.0.0.1:8000',
-					'site_name': 'Website',
+					'domain':mail_domain,
+					'site_name': 'Volat',
 					"uid": urlsafe_base64_encode(force_bytes(user.pk)),
 					'token': default_token_generator.make_token(user),
 					'protocol': 'http',
 					}
 					email = render_to_string(email_template_name, c)
 					try:
-						send_mail(subject, email, 'admin@example.com' , [user.email], fail_silently=False)
+						send_mail(subject, email, DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
 					except BadHeaderError:
 
 						return HttpResponse('Invalid header found.')
 						
-					messages.success(request, 'A message with reset password instructions has been sent to your inbox.')
+					messages.success(request, 'A message with reset password instructions has been sent to your inbox. Please check your SPAM folder.')
 					return redirect ("home")
 			else:
 				messages.error(request, 'An invalid email has been entered.')	
