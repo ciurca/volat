@@ -35,16 +35,24 @@
     {% endfor %}
     </tbody>
   </table>
-{% endif %}
-<form action="{% url 'generateContract' event.id %}" method='get'>
-  <button type='submit' class="btn btn-primary btn-sm">Generate contract</button>
+<form action="{% url 'exportContracts' event.id %}" method='get'>
+  <button type='submit' class="btn btn-primary btn-sm">Export Contracts</button>
 </form>
-<br>
-{% for contract in contract_list %}
-    {% if contract.event == event %}
-      <p> Contract {{contract}}: <a href="{{ contract.file.url }}" download><button class="btn btn-primary btn-sm">Download <i class="bi bi-download"></i></button></a>
-    {% endif %}
-    {% empty %}
-    No contract
-{% endfor %}
+{% endif %}
+{% if contract_list %}
+  {% for contract in contract_list %}
+      {% if contract.event == event %}
+        <p> Contract {{contract}}: <a href="{{ contract.file.url }}" download><button class="btn btn-primary btn-sm">Download <i class="bi bi-download"></i></button></a>
+      {% else %}
+      <form action="{% url 'generateContract' event.id %}" method='get'>
+        <button type='submit' class="btn btn-primary btn-sm">Generate contract</button>
+      </form>
+      <br>
+      {% endif %}
+  {% endfor %}
+{% else %}
+      <form action="{% url 'generateContract' event.id %}" method='get'>
+        <button type='submit' class="btn btn-primary btn-sm">Generate contract</button>
+      </form>
+{% endif %}
 {% endblock %}

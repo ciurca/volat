@@ -28,6 +28,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 
 from docxtpl import DocxTemplate
+import zipfile
+from io import BytesIO, StringIO
 # Create your views here.
 from .models import *
 from .forms import CreateUserForm, VolunteerForm
@@ -228,3 +230,28 @@ def password_reset_request(request):
 				messages.error(request, 'An invalid email has been entered.')	
 	password_reset_form = PasswordResetForm()
 	return render(request=request, template_name="password/password_reset.html", context={"password_reset_form":password_reset_form})
+
+def exportContracts(request, event_id):
+	event = get_object_or_404(Event, pk=event_id)
+	contracts = Contract.objects.all().filter(event=event.id)
+	filenames = []
+	for contract in contracts:
+		filenames.append(contract.file.path)
+	zip_subdir= f"Contracts for {event.title}"
+	zip_filename = f"Contracts for {event.title}"
+	s = BytesIO()
+	zf = zipfile.ZipFile(s, "w")
+	for fpath in filenames:
+		# Calculate path for file in zip
+		fdir, fname = os.path.split(fpath)
+		zip_path = os.path.join(zip_subdir, fname)
+
+		# Add file, at correct path
+		zf.write(fpath, zip_path)
+	zf.close()
+
+	resp = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
+	# ..and correct content-disposition
+	resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+
+	return resp
