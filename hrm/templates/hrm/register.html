@@ -1,5 +1,6 @@
 {% extends 'hrm/main.html' %}
 {% block content %}
+{% load crispy_forms_tags %}
 <h1>Register</h1>
 {% if messages %}
     {% for message in messages %}
@@ -11,7 +12,8 @@
 {% endif %}
 <form method='POST' action="">
     {% csrf_token %}
-    <div class="form-floating mb-3">
+    {% crispy form form.helper %}
+    <!-- <div class="form-floating mb-3">
       <input type="text" class="form-control" id="username" name="username" placeholder="Username">
       <label for="username">{{form.username.label}}</label>
     </div>
@@ -32,6 +34,7 @@
     </div>
   </div>
   {{ form.errors }}
-  <button type="submit" class="btn btn-primary">Submit</button>
+  <button type="submit" class="btn btn-primary">Submit</button> -->
 </form>
+
 {% endblock %}

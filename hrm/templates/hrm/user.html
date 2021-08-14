@@ -2,7 +2,7 @@
 {% block content %}
 
 <h1>User Profile</h1>
-<p>Go to <a href="{% url 'account-settings' %}">account settings.</a></p>
+<p>Go to <a href="{% url 'account-settings' %}" class="btn btn-primary"><i class="bi bi-gear"></i> Account settings.</a></p>
 <title>Volunteer - {{request.user.volunteer.first_name}} {{ volunteer.last_name }}</title> 
 <h1> {{request.user.volunteer.first_name}} {{ request.user.volunteer.last_name }} </h1>
 <p> First Name: {{ request.user.volunteer.first_name }} </p>

@@ -16,27 +16,13 @@ class Volunteer(models.Model):
         ('Highschool Student', 'Highschool Student'),
         ('University Student', 'University Student'),
         ('Employee', 'Employee'),
+        ('Other', 'Other')
     )
-    LANGUAGE_CHOICES = (
-        ('English', 'English'),
-        ('Romanian', 'Romanian'),
-        ('Hungarian', 'Hungarian'),
-        ('German', 'German'),
-        ('French', 'French'),
-    )
-    SHIRTSIZES_CHOICES = (
-        ('XS', 'XS'),
-        ('S', 'S'),
-        ('M', 'M'),
-        ('L', 'L'),
-        ('XL', 'XL'),
-        ('XXL', 'XXL'),
-    )
-    occupation = models.CharField(max_length=100, choices=OCCUPATION_CHOICES, blank=True, null=True)
-    languages_spoken = MultiSelectField(choices = LANGUAGE_CHOICES, blank=True,  null="Not Added")
+    # occupation = models.CharField(max_length=100, choices=OCCUPATION_CHOICES, blank=True, null=True)
+    # languages_spoken = MultiSelectField(choices = LANGUAGE_CHOICES, blank=True,  null="Not Added")
     email = models.EmailField(max_length=200,blank=True,  null=True)
     phone_number = PhoneNumberField(null=True, blank=True, )
-    fb_link = models.URLField(max_length=300, null=True, blank=True)
+    fb_link = models.URLField("Facebook Link", max_length=300, null=True, blank=True)
     departments = models.ForeignKey("Department", on_delete=models.CASCADE, blank=True,  null=True) 
     # contract = models.FileField(upload_to="contracte/", null=True, blank=True)
 
