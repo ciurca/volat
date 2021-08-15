@@ -34,7 +34,6 @@ from io import BytesIO, StringIO
 from .models import *
 from .forms import CreateUserForm, VolunteerForm
 from .decorators import * 
-import volat
 
 @login_required(login_url='login')
 def home(request):
@@ -121,79 +120,6 @@ class EventView(generic.DetailView):
 			 context['contract_list'] = None
 		 return context
 
-def generateContract(request, event_id):
-	event = get_object_or_404(Event, pk=event_id)
-	volunteer = request.user.volunteer
-	contracts = Contract.objects.all().filter(volunteer=volunteer.id)
-	template_path = "static/files/important/contract_templates/example.docx"
-	savelocation_path = "static/files/contracte/test.docx"
-	contract_list = []
-	if bool(contracts): 
-		for contract in contracts:
-				if contract.event == event:
-					contract_list.append(contract)
-		if bool(contract_list):
-			print(contract_list)
-			messages.warning(request, "There is already a contract for this event.")
-		else:
-			if volunteer.first_name and volunteer.last_name:
-				print("no contract for this event")
-				firstName = volunteer.first_name
-				lastName = volunteer.last_name
-				birthDay = volunteer.birth_date
-				templatedoc = DocxTemplate(os.path.join(BASE_DIR, template_path))
-				context = { 
-					'FirstName' : firstName,
-					'LastName' : lastName,
-					'Birthday' : str(birthDay),
-					'Date' : '{:%d-%b-%Y}'.format(datetime.today()),
-				}
-				templatedoc.render(context)
-				save_location = os.path.join(BASE_DIR, savelocation_path)
-				templatedoc.save(save_location)
-				t.sleep(3)
-				f = open(save_location, 'rb')
-				new_contract = Contract.objects.create(
-					volunteer=volunteer,
-					event=event,
-				)
-				new_contract.file.save(f"Contract-{firstName}{lastName}.docx", File(f))
-				messages.success(request, 'Contract created succesfully!')
-				return HttpResponseRedirect(reverse('event', args=(event.id,)))
-			else:
-				messages.warning(request, "Go into settings and complete your profile.")
-				return HttpResponseRedirect(reverse('event', args=(event.id,)))
-
-	else:
-		if volunteer.first_name and volunteer.last_name:
-			firstName = volunteer.first_name
-			lastName = volunteer.last_name
-			birthDay = volunteer.birth_date
-			templatedoc = DocxTemplate(os.path.join(BASE_DIR, template_path))
-			context = { 
-				'FirstName' : firstName,
-				'LastName' : lastName,
-				'Birthday' : str(birthDay),
-				'Date' : '{:%d-%b-%Y}'.format(datetime.today()),
-			}
-			templatedoc.render(context)
-			save_location = os.path.join(BASE_DIR, savelocation_path)
-			templatedoc.save(save_location)
-			t.sleep(3)
-			f = open(save_location, 'rb')
-			new_contract = Contract.objects.create(
-				volunteer=volunteer,
-				event=event,
-			)
-			new_contract.file.save(f"Contract-{firstName}{lastName}.docx", File(f))
-			messages.success(request, 'Contract created succesfully!')
-			return HttpResponseRedirect(reverse('event', args=(event.id,)))
-		else:
-			message= format_html("Go into&nbsp;<a href='{}'>account settings</a>&nbsp;and complete your profile.", reverse('account-settings'))
-			messages.error(request, message)
-			return HttpResponseRedirect(reverse('event', args=(event.id,)))
-	return HttpResponseRedirect(reverse('event', args=(event.id,)))
-
 @unauthenticated_user
 def password_reset_request(request):
 	if request.method == "POST":
@@ -230,28 +156,3 @@ def password_reset_request(request):
 				messages.error(request, 'An invalid email has been entered.')	
 	password_reset_form = PasswordResetForm()
 	return render(request=request, template_name="password/password_reset.html", context={"password_reset_form":password_reset_form})
-
-def exportContracts(request, event_id):
-	event = get_object_or_404(Event, pk=event_id)
-	contracts = Contract.objects.all().filter(event=event.id)
-	filenames = []
-	for contract in contracts:
-		filenames.append(contract.file.path)
-	zip_subdir= f"Contracts for {event.title}"
-	zip_filename = f"Contracts for {event.title}"
-	s = BytesIO()
-	zf = zipfile.ZipFile(s, "w")
-	for fpath in filenames:
-		# Calculate path for file in zip
-		fdir, fname = os.path.split(fpath)
-		zip_path = os.path.join(zip_subdir, fname)
-
-		# Add file, at correct path
-		zf.write(fpath, zip_path)
-	zf.close()
-
-	resp = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
-	# ..and correct content-disposition
-	resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
-
-	return resp

@@ -38,6 +38,7 @@
 <form action="{% url 'exportContracts' event.id %}" method='get'>
   <button type='submit' class="btn btn-primary btn-sm">Export Contracts</button>
 </form>
+<br>
 {% endif %}
 {% if contract_list %}
   {% for contract in contract_list %}
