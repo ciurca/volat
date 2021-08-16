@@ -1,10 +1,12 @@
 from django.contrib import messages
+from django.contrib.auth.forms import PasswordResetForm
+from django.http import request
 from django.http.response import HttpResponse, HttpResponseRedirect
 from hrm.models import *
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from docxtpl import DocxTemplate
 import os
-from volat.settings import BASE_DIR
+from volat.settings import BASE_DIR, DEBUG, DEFAULT_FROM_EMAIL
 import zipfile
 from io import BytesIO, StringIO
 from django.urls import reverse
@@ -12,6 +14,12 @@ import time as t
 from datetime import datetime
 from django.utils.html import format_html
 from django.core.files.base import File
+from django.template.loader import render_to_string
+from django.db.models.query_utils import Q
+from django.utils.http import urlsafe_base64_encode
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes
+from django.core.mail import send_mail, BadHeaderError
 
 def _generateContract(volunteer, template_path, savelocation_path, event, request):
 	if volunteer.first_name and volunteer.last_name:
@@ -63,12 +71,27 @@ def generateContract(request, event_id):
 		return _generateContract(volunteer, template_path, savelocation_path, event, request)
 	return HttpResponseRedirect(reverse('event', args=(event.id,)))
 
+def _delete_contract(request, event_id):
+	event = get_object_or_404(Event, pk=event_id)
+	volunteer = request.user.volunteer
+	vol_contracts = Contract.objects.all().filter(volunteer=volunteer.id)
+	contracts = vol_contracts.filter(event=event.id)
+	for contract in contracts:
+		contract.delete()
+	return HttpResponseRedirect(reverse('event', args=(event.id,)))
+
 def exportContracts(request, event_id):
 	event = get_object_or_404(Event, pk=event_id)
 	contracts = Contract.objects.all().filter(event=event.id)
 	filenames = []
 	for contract in contracts:
-		filenames.append(contract.file.path)
+		if contract.file:
+			filenames.append(contract.file.path)
+		else:
+			messages.error(request, "Some contracts don't have any files associated with them.")
+			return HttpResponseRedirect(reverse('event', args=(event.id,)))
+			break
+		
 	zip_subdir= f"Contracts for {event.title}"
 	zip_filename = f"Contracts for {event.title}"
 	s = BytesIO()

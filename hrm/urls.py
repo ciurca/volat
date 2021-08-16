@@ -16,5 +16,6 @@ urlpatterns = [
     path('event/<int:pk>', views.EventView.as_view(), name="event"),
     path('event/<int:event_id>/generateContract', services.generateContract, name="generateContract"),
     path('event/<int:event_id>/exportContracts', services.exportContracts, name="exportContracts"),
+    path('event/<int:event_id>/deleteContract', services._delete_contract, name="deleteContract"),
 
 ]

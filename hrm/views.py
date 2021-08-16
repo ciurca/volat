@@ -33,7 +33,9 @@ from io import BytesIO, StringIO
 # Create your views here.
 from .models import *
 from .forms import CreateUserForm, VolunteerForm
-from .decorators import * 
+from .decorators import *
+from .services import *
+from hrm import services 
 
 @login_required(login_url='login')
 def home(request):
@@ -103,7 +105,16 @@ def accountSettings(request):
 	if request.method == 'POST':
 		form = VolunteerForm(request.POST, request.FILES, instance=volunteer)
 		if form.is_valid():
+			volunteer = form.save()
+			email = form.cleaned_data.get('email')
+			first_name = form.cleaned_data.get('first_name')
+			last_name = form.cleaned_data.get('last_name')
+			obj = Volunteer.objects.get(user__id=request.user.id)
+			obj.email = email
+			obj.first_name = first_name 
+			obj.last_name = last_name 
 			form.save()
+
 	context = {'form': form}
 	return render(request, 'hrm/account_settings.html', context)
 
@@ -115,7 +126,9 @@ class EventView(generic.DetailView):
 		 context = super(EventView, self).get_context_data(**kwargs)
 		 self.volunteer = self.request.user.volunteer
 		 try:
-			 context['contract_list'] = Contract.objects.all().filter(volunteer=self.volunteer.id)
+			 vol_contracts = Contract.objects.all().filter(volunteer=self.volunteer.id)
+			 context['contract_list'] = vol_contracts.filter(event=context['event'].id)
+			 print(context['contract_list'])
 		 except Contract.DoesNotExist:
 			 context['contract_list'] = None
 		 return context

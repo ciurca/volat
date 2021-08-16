@@ -12,12 +12,6 @@ class Volunteer(models.Model):
     birth_date = models.DateField("Date of Birth", blank=True, null=True)
     residence = models.CharField("Current place of residence", blank=True, null=True, max_length=300)
     profile_pic = models.ImageField(null=True, default="files/default-user-image.png", blank=True)
-    OCCUPATION_CHOICES = (
-        ('Highschool Student', 'Highschool Student'),
-        ('University Student', 'University Student'),
-        ('Employee', 'Employee'),
-        ('Other', 'Other')
-    )
     # occupation = models.CharField(max_length=100, choices=OCCUPATION_CHOICES, blank=True, null=True)
     # languages_spoken = MultiSelectField(choices = LANGUAGE_CHOICES, blank=True,  null="Not Added")
     email = models.EmailField(max_length=200,blank=True,  null=True)
