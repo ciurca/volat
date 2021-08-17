@@ -26,7 +26,7 @@ def _generateContract(volunteer, template_path, savelocation_path, event, reques
 				firstName = volunteer.first_name
 				lastName = volunteer.last_name
 				upperFullName = f"{volunteer.last_name} {volunteer.first_name}"
-				templatedoc = DocxTemplate(os.path.join(BASE_DIR, template_path))
+				templatedoc = DocxTemplate(template_path)
 				context = { 
 					'first_name' : volunteer.first_name,
 					'last_name' : volunteer.last_name,
