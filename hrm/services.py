@@ -26,7 +26,7 @@ def _generateContract(volunteer, template_path, savelocation_path, event, reques
 				firstName = volunteer.first_name
 				lastName = volunteer.last_name
 				upperFullName = f"{volunteer.last_name} {volunteer.first_name}"
-				templatedoc = DocxTemplate(template_path)
+				templatedoc = DocxTemplate(os.path.join(BASE_DIR, template_path))
 				context = { 
 					'first_name' : volunteer.first_name,
 					'last_name' : volunteer.last_name,
@@ -78,7 +78,7 @@ def generateContract(request, event_id):
 	# 	messages.warning(request, "There are no template associated with this event. Please talk to the event organizer.")
 	# 	return HttpResponseRedirect(reverse('event', args=(event.id,)))
 	if bool(contract_template):
-		template_path = contract_template[0].file.path
+		template_path = contract_template[0].file.name
 		savelocation_path = "static/files/contracte/test.docx"
 		contract_list = []
 		if bool(contracts): 
