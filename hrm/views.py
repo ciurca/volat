@@ -28,11 +28,14 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 
 from docxtpl import DocxTemplate
+import zipfile
+from io import BytesIO, StringIO
 # Create your views here.
 from .models import *
 from .forms import CreateUserForm, VolunteerForm
-from .decorators import * 
-import volat
+from .decorators import *
+from .services import *
+from hrm import services 
 
 @login_required(login_url='login')
 def home(request):
@@ -96,15 +99,24 @@ def userPage(request):
 	return render(request, 'hrm/user.html', context)
 
 @login_required(login_url='login')
-def accountSettings(request):
+def volunteerProfile(request):
 	volunteer = request.user.volunteer
 	form = VolunteerForm(instance=volunteer)
 	if request.method == 'POST':
 		form = VolunteerForm(request.POST, request.FILES, instance=volunteer)
 		if form.is_valid():
+			volunteer = form.save()
+			email = form.cleaned_data.get('email')
+			first_name = form.cleaned_data.get('first_name')
+			last_name = form.cleaned_data.get('last_name')
+			obj = Volunteer.objects.get(user__id=request.user.id)
+			obj.email = email
+			obj.first_name = first_name 
+			obj.last_name = last_name 
 			form.save()
+
 	context = {'form': form}
-	return render(request, 'hrm/account_settings.html', context)
+	return render(request, 'hrm/volunteer_profile.html', context)
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class EventView(generic.DetailView):
@@ -114,83 +126,12 @@ class EventView(generic.DetailView):
 		 context = super(EventView, self).get_context_data(**kwargs)
 		 self.volunteer = self.request.user.volunteer
 		 try:
-			 context['contract_list'] = Contract.objects.all().filter(volunteer=self.volunteer.id)
+			 vol_contracts = Contract.objects.all().filter(volunteer=self.volunteer.id)
+			 context['contract_list'] = vol_contracts.filter(event=context['event'].id)
+			 print(context['contract_list'])
 		 except Contract.DoesNotExist:
 			 context['contract_list'] = None
 		 return context
-
-def generateContract(request, event_id):
-	event = get_object_or_404(Event, pk=event_id)
-	volunteer = request.user.volunteer
-	contracts = Contract.objects.all().filter(volunteer=volunteer.id)
-	template_path = "static/files/important/contract_templates/example.docx"
-	savelocation_path = "static/files/contracte/test.docx"
-	contract_list = []
-	if bool(contracts): 
-		for contract in contracts:
-				if contract.event == event:
-					contract_list.append(contract)
-		if bool(contract_list):
-			print(contract_list)
-			messages.warning(request, "There is already a contract for this event.")
-		else:
-			if volunteer.first_name and volunteer.last_name:
-				print("no contract for this event")
-				firstName = volunteer.first_name
-				lastName = volunteer.last_name
-				birthDay = volunteer.birth_date
-				templatedoc = DocxTemplate(os.path.join(BASE_DIR, template_path))
-				context = { 
-					'FirstName' : firstName,
-					'LastName' : lastName,
-					'Birthday' : str(birthDay),
-					'Date' : '{:%d-%b-%Y}'.format(datetime.today()),
-				}
-				templatedoc.render(context)
-				save_location = os.path.join(BASE_DIR, savelocation_path)
-				templatedoc.save(save_location)
-				t.sleep(3)
-				f = open(save_location, 'rb')
-				new_contract = Contract.objects.create(
-					volunteer=volunteer,
-					event=event,
-				)
-				new_contract.file.save(f"Contract-{firstName}{lastName}.docx", File(f))
-				messages.success(request, 'Contract created succesfully!')
-				return HttpResponseRedirect(reverse('event', args=(event.id,)))
-			else:
-				messages.warning(request, "Go into settings and complete your profile.")
-				return HttpResponseRedirect(reverse('event', args=(event.id,)))
-
-	else:
-		if volunteer.first_name and volunteer.last_name:
-			firstName = volunteer.first_name
-			lastName = volunteer.last_name
-			birthDay = volunteer.birth_date
-			templatedoc = DocxTemplate(os.path.join(BASE_DIR, template_path))
-			context = { 
-				'FirstName' : firstName,
-				'LastName' : lastName,
-				'Birthday' : str(birthDay),
-				'Date' : '{:%d-%b-%Y}'.format(datetime.today()),
-			}
-			templatedoc.render(context)
-			save_location = os.path.join(BASE_DIR, savelocation_path)
-			templatedoc.save(save_location)
-			t.sleep(3)
-			f = open(save_location, 'rb')
-			new_contract = Contract.objects.create(
-				volunteer=volunteer,
-				event=event,
-			)
-			new_contract.file.save(f"Contract-{firstName}{lastName}.docx", File(f))
-			messages.success(request, 'Contract created succesfully!')
-			return HttpResponseRedirect(reverse('event', args=(event.id,)))
-		else:
-			message= format_html("Go into&nbsp;<a href='{}'>account settings</a>&nbsp;and complete your profile.", reverse('account-settings'))
-			messages.error(request, message)
-			return HttpResponseRedirect(reverse('event', args=(event.id,)))
-	return HttpResponseRedirect(reverse('event', args=(event.id,)))
 
 @unauthenticated_user
 def password_reset_request(request):

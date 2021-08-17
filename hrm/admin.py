@@ -7,4 +7,5 @@ admin.site.register(Volunteer)
 admin.site.register(Organizer)
 admin.site.register(Event)
 admin.site.register(Contract)
+admin.site.register(LegalTemplate)
 

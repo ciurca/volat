@@ -4,9 +4,9 @@
 {% if messages %}
     {% for message in messages %}
         {% if message.tags == 'success' %}
-       <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
+       <div class="alert alert-success alert-dismissible fade show d-flex align-items-center fadeAlert" role="alert">
         {% else %}
-       <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
+       <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center fadeAlert" role="alert">
         {% endif %}
         {{ message }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -35,16 +35,37 @@
     {% endfor %}
     </tbody>
   </table>
-{% endif %}
-<form action="{% url 'generateContract' event.id %}" method='get'>
-  <button type='submit' class="btn btn-primary btn-sm">Generate contract</button>
+<form action="{% url 'exportContracts' event.id %}" method='get'>
+  <button type='submit' class="btn btn-primary btn-sm">Export Contracts</button>
 </form>
 <br>
-{% for contract in contract_list %}
-    {% if contract.event == event %}
-      <p> Contract {{contract}}: <a href="{{ contract.file.url }}" download><button class="btn btn-primary btn-sm">Download <i class="bi bi-download"></i></button></a>
+{% endif %}
+{% if contract_list %}
+  {% for contract in contract_list %}
+    {% if contract.file %}
+      {% if contract.event == event %}
+        <p> Contract {{contract}}: <a href="{{ contract.file.url }}" download><button class="btn btn-primary btn-sm">Download <i class="bi bi-download"></i></button></a>
+      {% else %}
+      <form action="{% url 'generateContract' event.id %}" method='get'>
+        <button type='submit' id="btnFetch" class="btn btn-primary btn-sm">Generate contract</button>
+      </form>
+      <br>
     {% endif %}
-    {% empty %}
-    No contract
-{% endfor %}
+    {% else %}
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+      <div>
+      <i class="bi bi-exclamation-triangle-fill"></i>
+        No document associated with your contract. Please delete and generate your contract again.
+      </div>
+    </div>
+    <form action="{% url 'deleteContract' event.id %}" method='get'>
+      <button type='submit' class="btn btn-primary btn-sm">Delete contract</button>
+    </form>
+    {% endif %}
+  {% endfor %}
+{% else %}
+      <form action="{% url 'generateContract' event.id %}" method='get'>
+        <button type='submit' id="btnFetch" class="btn btn-primary btn-sm">Generate contract</button>
+      </form>
+{% endif %}
 {% endblock %}
