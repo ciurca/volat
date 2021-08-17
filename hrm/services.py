@@ -26,7 +26,7 @@ def _generateContract(volunteer, template_path, savelocation_path, event, reques
 				firstName = volunteer.first_name
 				lastName = volunteer.last_name
 				upperFullName = f"{volunteer.last_name} {volunteer.first_name}"
-				templatedoc = DocxTemplate(os.path.join(BASE_DIR, template_path))
+				templatedoc = DocxTemplate(template_path)
 				context = { 
 					'first_name' : volunteer.first_name,
 					'last_name' : volunteer.last_name,
@@ -116,7 +116,6 @@ def exportContracts(request, event_id):
 		else:
 			messages.error(request, "Some contracts don't have any files associated with them.")
 			return HttpResponseRedirect(reverse('event', args=(event.id,)))
-			break
 		
 	zip_subdir= f"Contracts for {event.title}"
 	zip_filename = f"Contracts for {event.title}"
