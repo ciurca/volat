@@ -47,7 +47,7 @@
         <p> Contract {{contract}}: <a href="{{ contract.file.url }}" download><button class="btn btn-primary btn-sm">Download <i class="bi bi-download"></i></button></a>
       {% else %}
       <form action="{% url 'generateContract' event.id %}" method='get'>
-        <button type='submit' class="btn btn-primary btn-sm">Generate contract</button>
+        <button type='submit' id="btnFetch" class="btn btn-primary btn-sm">Generate contract</button>
       </form>
       <br>
     {% endif %}
@@ -65,7 +65,7 @@
   {% endfor %}
 {% else %}
       <form action="{% url 'generateContract' event.id %}" method='get'>
-        <button type='submit' class="btn btn-primary btn-sm">Generate contract</button>
+        <button type='submit' id="btnFetch" class="btn btn-primary btn-sm">Generate contract</button>
       </form>
 {% endif %}
 {% endblock %}

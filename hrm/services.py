@@ -25,13 +25,25 @@ def _generateContract(volunteer, template_path, savelocation_path, event, reques
 	if volunteer.first_name and volunteer.last_name:
 				firstName = volunteer.first_name
 				lastName = volunteer.last_name
-				birthDay = volunteer.birth_date
+				upperFullName = f"{volunteer.last_name} {volunteer.first_name}"
 				templatedoc = DocxTemplate(os.path.join(BASE_DIR, template_path))
 				context = { 
-					'FirstName' : firstName,
-					'LastName' : lastName,
-					'Birthday' : str(birthDay),
-					'Date' : '{:%d-%b-%Y}'.format(datetime.today()),
+					'first_name' : volunteer.first_name,
+					'last_name' : volunteer.last_name,
+					'birth_date' : str(volunteer.birth_date),
+					'birth_place': volunteer.birth_place,
+					'adress': volunteer.adress,
+					'country': volunteer.country,
+					'county': volunteer.county,
+					'parents': volunteer.parents,
+					'domiciliu' : volunteer.domiciliu,
+					'cnp_id' : str(volunteer.cnp_id),
+					'seria_id': volunteer.seria_id,
+					'nr_serie_id': str(volunteer.nr_serie_id),
+					'emitere_id': volunteer.emitere_id,
+					'id_date': str(volunteer.id_date),
+					'telephone_number': str(volunteer.telephone_number),
+					'full_name_caps': upperFullName.upper(),
 				}
 				templatedoc.render(context)
 				save_location = os.path.join(BASE_DIR, savelocation_path)
@@ -54,21 +66,35 @@ def generateContract(request, event_id):
 	event = get_object_or_404(Event, pk=event_id)
 	volunteer = request.user.volunteer
 	contracts = Contract.objects.all().filter(volunteer=volunteer.id)
-	template_path = "static/files/important/contract_templates/example.docx"
-	savelocation_path = "static/files/contracte/test.docx"
-	contract_list = []
-	if bool(contracts): 
-		for contract in contracts:
-				if contract.event == event:
-					contract_list.append(contract)
-		if bool(contract_list):
-			print(contract_list)
-			messages.warning(request, "There is already a contract for this event.")
+	legal_templates = LegalTemplate.objects.all().filter(event=event.id)
+	if legal_templates is None:
+		messages.warning(request, "There are no template associated with this event. Please talk to the event organizer.")
+		return HttpResponseRedirect(reverse('event', args=(event.id,)))
+	contract_template = []
+	for template in legal_templates:
+		if template.type == "Contract Voluntariat":
+			contract_template.append(template)
+	# if contract_template[0] is None:
+	# 	messages.warning(request, "There are no template associated with this event. Please talk to the event organizer.")
+	# 	return HttpResponseRedirect(reverse('event', args=(event.id,)))
+	if bool(contract_template):
+		template_path = contract_template[0].file.path
+		savelocation_path = "static/files/contracte/test.docx"
+		contract_list = []
+		if bool(contracts): 
+			for contract in contracts:
+					if contract.event == event:
+						contract_list.append(contract)
+			if bool(contract_list):
+				messages.warning(request, "There is already a contract for this event.")
+			else:
+				return _generateContract(volunteer, template_path, savelocation_path, event, request)
+
 		else:
 			return _generateContract(volunteer, template_path, savelocation_path, event, request)
-
 	else:
-		return _generateContract(volunteer, template_path, savelocation_path, event, request)
+		messages.warning(request, "There are no templates associated with this event. Please talk to the event organizer.")
+		return HttpResponseRedirect(reverse('event', args=(event.id,)))
 	return HttpResponseRedirect(reverse('event', args=(event.id,)))
 
 def _delete_contract(request, event_id):

@@ -99,7 +99,7 @@ def userPage(request):
 	return render(request, 'hrm/user.html', context)
 
 @login_required(login_url='login')
-def accountSettings(request):
+def volunteerProfile(request):
 	volunteer = request.user.volunteer
 	form = VolunteerForm(instance=volunteer)
 	if request.method == 'POST':
@@ -116,7 +116,7 @@ def accountSettings(request):
 			form.save()
 
 	context = {'form': form}
-	return render(request, 'hrm/account_settings.html', context)
+	return render(request, 'hrm/volunteer_profile.html', context)
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class EventView(generic.DetailView):
