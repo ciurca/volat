@@ -112,25 +112,27 @@ def _delete_contract(request, event_id):
 def exportContracts(request, event_id):
 	event = get_object_or_404(Event, pk=event_id)
 	contracts = Contract.objects.all().filter(event=event.id)
-	filenames = []
+	contract_files = []  # CHANGED
 	for contract in contracts:
 		if contract.file:
-			filenames.append(contract.file.path)
+			contract_files.append(contract.file)  # CHANGED
 		else:
 			messages.error(request, "Some contracts don't have any files associated with them.")
 			return HttpResponseRedirect(reverse('event', args=(event.id,)))
 		
 	zip_subdir= f"Contracts for {event.title}"
-	zip_filename = f"Contracts for {event.title}"
+	zip_filename = f"Contracts for {event.title}.zip"
 	s = BytesIO()
 	zf = zipfile.ZipFile(s, "w")
-	for fpath in filenames:
+	for contract_file in contract_files:  # CHANGED
 		# Calculate path for file in zip
-		fdir, fname = os.path.split(fpath)
+		fdir, fname = os.path.split(contract_file.name)  # CHANGED
 		zip_path = os.path.join(zip_subdir, fname)
 
 		# Add file, at correct path
-		zf.write(fpath, zip_path)
+		with zf.open(zip_path, 'w') as dst:
+			for chunk in contract_file.chunks():
+				dst.write(chunk)
 	zf.close()
 
 	resp = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
