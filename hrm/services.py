@@ -20,6 +20,8 @@ from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail, BadHeaderError
+from tempfile import TemporaryDirectory
+from pathlib import Path
 
 def _generateContract(volunteer, template_path, savelocation_path, event, request):
 	if volunteer.first_name and volunteer.last_name:
@@ -78,7 +80,8 @@ def generateContract(request, event_id):
 	# 	messages.warning(request, "There are no template associated with this event. Please talk to the event organizer.")
 	# 	return HttpResponseRedirect(reverse('event', args=(event.id,)))
 	if bool(contract_template):
-		template_path = f"files/{contract_template[0].file.name}"
+		template_path = contract_template[0].file
+		print(template_path)
 		savelocation_path = "static/files/contracte/test.docx"
 		contract_list = []
 		if bool(contracts): 
