@@ -78,7 +78,7 @@ def generateContract(request, event_id):
 	# 	messages.warning(request, "There are no template associated with this event. Please talk to the event organizer.")
 	# 	return HttpResponseRedirect(reverse('event', args=(event.id,)))
 	if bool(contract_template):
-		template_path = f"static/{contract_template[0].file.name}"
+		template_path = f"static/files/important/contract_templates/{contract_template[0].file.name}"
 		savelocation_path = "static/files/contracte/test.docx"
 		contract_list = []
 		if bool(contracts): 
