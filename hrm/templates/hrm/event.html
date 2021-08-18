@@ -45,6 +45,9 @@
     {% if contract.file %}
       {% if contract.event == event %}
         <p> Contract {{contract}}: <a href="{{ contract.file.url }}" download><button class="btn btn-primary btn-sm">Download <i class="bi bi-download"></i></button></a>
+        <form action="{% url 'deleteContract' event.id %}" method='get'>
+          <button type='submit' class="btn btn-primary btn-sm">Delete contract</button>
+        </form>
       {% else %}
       <form action="{% url 'generateContract' event.id %}" method='get'>
         <button type='submit' id="btnFetch" class="btn btn-primary btn-sm">Generate contract</button>

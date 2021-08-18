@@ -131,29 +131,30 @@ def personalInformation(request):
 			obj.first_name = first_name 
 			obj.last_name = last_name 
 			form.save()
+			messages.success(request, 'Profile updated successfully!')
 
 	context = {'form': form}
 	return render(request, 'hrm/account/personal_information.html', context)
 
-@login_required(login_url='login')
-def volunteerProfile(request):
-	volunteer = request.user.volunteer
-	form = VolunteerForm(instance=volunteer)
-	if request.method == 'POST':
-		form = VolunteerForm(request.POST, request.FILES, instance=volunteer)
-		if form.is_valid():
-			volunteer = form.save()
-			email = form.cleaned_data.get('email')
-			first_name = form.cleaned_data.get('first_name')
-			last_name = form.cleaned_data.get('last_name')
-			obj = Volunteer.objects.get(user__id=request.user.id)
-			obj.email = email
-			obj.first_name = first_name 
-			obj.last_name = last_name 
-			form.save()
+# @login_required(login_url='login')
+# def volunteerProfile(request):
+# 	volunteer = request.user.volunteer
+# 	form = VolunteerForm(instance=volunteer)
+# 	if request.method == 'POST':
+# 		form = VolunteerForm(request.POST, request.FILES, instance=volunteer)
+# 		if form.is_valid():
+# 			volunteer = form.save()
+# 			email = form.cleaned_data.get('email')
+# 			first_name = form.cleaned_data.get('first_name')
+# 			last_name = form.cleaned_data.get('last_name')
+# 			obj = Volunteer.objects.get(user__id=request.user.id)
+# 			obj.email = email
+# 			obj.first_name = first_name 
+# 			obj.last_name = last_name 
+# 			form.save()
 
-	context = {'form': form}
-	return render(request, 'hrm/volunteer_profile.html', context)
+# 	context = {'form': form}
+# 	return render(request, 'hrm/volunteer_profile.html', context)
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class EventView(generic.DetailView):

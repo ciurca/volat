@@ -12,7 +12,6 @@ urlpatterns = [
     path('login/', views.loginPage, name="login"),
     path('logout/', views.logoutUser, name="logout"),
     path('user/', views.userPage, name='user-page'),
-    path('profile/', views.volunteerProfile, name='volunteer-profile'),
     path('account/change_password', views.changePassword, name='account-change_password'),
     path('account/personal_information', views.personalInformation, name='account-personal_information'),
     path('event/<int:pk>', views.EventView.as_view(), name="event"),
