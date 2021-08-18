@@ -22,13 +22,30 @@ from django.utils.encoding import force_bytes
 from django.core.mail import send_mail, BadHeaderError
 from tempfile import TemporaryDirectory
 from pathlib import Path
-
+import secrets
 def _generateContract(volunteer, template_path, savelocation_path, event, request):
 	if volunteer.first_name and volunteer.last_name:
 				firstName = volunteer.first_name
 				lastName = volunteer.last_name
 				upperFullName = f"{volunteer.last_name} {volunteer.first_name}"
 				templatedoc = DocxTemplate(template_path)
+				fields_list = [
+					volunteer.first_name,
+					volunteer.last_name,
+					str(volunteer.birth_date),
+					volunteer.birth_place,
+					volunteer.adress,
+					volunteer.country,
+					volunteer.county,
+					volunteer.parents,
+					volunteer.domiciliu,
+					str(volunteer.cnp_id),
+					volunteer.seria_id,
+					str(volunteer.nr_serie_id),
+					volunteer.emitere_id,
+					str(volunteer.id_date),
+					str(volunteer.telephone_number),
+				]
 				context = { 
 					'first_name' : volunteer.first_name,
 					'last_name' : volunteer.last_name,
@@ -47,20 +64,26 @@ def _generateContract(volunteer, template_path, savelocation_path, event, reques
 					'telephone_number': str(volunteer.telephone_number),
 					'full_name_caps': upperFullName.upper(),
 				}
+				for field in fields_list:
+					if field is None:
+						message= format_html("Go into&nbsp;<a href='{}'>personal information</a>&nbsp;and complete your profile.", reverse('account-personal_information'))
+						messages.error(request, message)
+						return HttpResponseRedirect(reverse('event', args=(event.id,)))
 				templatedoc.render(context)
 				save_location = os.path.join(BASE_DIR, savelocation_path)
 				templatedoc.save(save_location)
+
 				t.sleep(3)
 				with open(save_location, 'rb') as file_handle:
 					new_contract = Contract.objects.create(
 						volunteer=volunteer,
 						event=event,
 					)
-					new_contract.file.save(f"Contract-{firstName}{lastName}.docx", File(file_handle))
+					new_contract.file.save(f"Contract-{firstName}{lastName}{secrets.token_hex(3)}.docx", File(file_handle))
 				messages.success(request, 'Contract created succesfully!')
 				return HttpResponseRedirect(reverse('event', args=(event.id,)))
 	else:
-		message= format_html("Go into&nbsp;<a href='{}'>account settings</a>&nbsp;and complete your profile.", reverse('account-settings'))
+		message= format_html("Go into&nbsp;<a href='{}'>personal information</a>&nbsp;and complete your profile.", reverse('account-personal_information'))
 		messages.error(request, message)
 		return HttpResponseRedirect(reverse('event', args=(event.id,)))
 
