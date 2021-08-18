@@ -81,7 +81,10 @@ def loginPage(request):
 		user = authenticate(request, username = username, password = password)
 		if user is not None:
 			login(request, user)
-			return redirect('home')
+			if 'next' in request.POST:
+				return redirect(request.POST.get('next'))
+			else:
+				return redirect('home')
 		else:
 			messages.info(request, 'Username OR password is incorrect.')
 	context = {}
@@ -165,7 +168,6 @@ class EventView(generic.DetailView):
 		 try:
 			 vol_contracts = Contract.objects.all().filter(volunteer=self.volunteer.id)
 			 context['contract_list'] = vol_contracts.filter(event=context['event'].id)
-			 print(context['contract_list'])
 		 except Contract.DoesNotExist:
 			 context['contract_list'] = None
 		 return context
