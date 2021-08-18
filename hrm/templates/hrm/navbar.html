@@ -24,7 +24,7 @@
       {% if user.is_authenticated %}
       <div class="dropdown">
         <a href="#" class="d-block link-light text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-          <img src="{{request.user.volunteer.profile_pic.url}}" alt="{{request.user}}" width="32" height="32" class="rounded-circle">
+          <img src="{% static 'files/default-user-image.png' %}" alt="{{request.user}}" width="32" height="32" class="rounded-circle">
           {% if request.user.volunteer.first_name and request.user.volunteer.first_name %}
           <span class="light">{{request.user.volunteer.first_name}} {{request.user.volunteer.last_name}}</span>
           {% else %}
@@ -32,8 +32,8 @@
           {% endif %}
         </a>
         <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
-          <li><a class="dropdown-item" href="{% url 'volunteer-profile' %}"><i class="bi bi-person"></i> Volunteer Profile</a></li>
-          <li><a class="dropdown-item" href="#accountSettings"><i class="bi bi-gear"></i> User Settings</a></li>
+          <!-- <li><a class="dropdown-item" href="{% url 'volunteer-profile' %}"><i class="bi bi-person"></i> Volunteer Profile</a></li> -->
+          <li><a class="dropdown-item" href="{% url 'account-personal_information' %}"><i class="bi bi-gear"></i> User Settings</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Sign out</a></li>
         </ul>

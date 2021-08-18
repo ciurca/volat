@@ -12,8 +12,8 @@ from django.urls import reverse
 from django.views import generic
 from django.views.generic import TemplateView
 
-from django.contrib.auth.forms import PasswordResetForm, UserCreationForm # for the register page
-from django.contrib.auth import authenticate, login, logout # for the authentification part
+from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm, UserCreationForm # for the register page
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash # for the authentification part
 from django.contrib.auth.models import Group
 from django.contrib import messages #send success/error messages
 
@@ -97,6 +97,43 @@ def userPage(request):
 
 	context = {}
 	return render(request, 'hrm/user.html', context)
+
+@login_required(login_url='login')
+def changePassword(request):
+	if request.method == 'POST':
+		change_pass_form = PasswordChangeForm(request.user, request.POST)
+		if change_pass_form.is_valid():
+			user = change_pass_form.save()
+			update_session_auth_hash(request, user)  # Important!
+			messages.success(request, 'Your password was successfully updated!')
+			return redirect('change_password')
+		else:
+			messages.error(request, 'Please correct the error below.')
+	else:
+		change_pass_form = PasswordChangeForm(request.user)
+	return render(request, 'hrm/account/change_password.html', {
+		'change_pass_form': change_pass_form 
+	})
+
+@login_required(login_url='login')
+def personalInformation(request):
+	volunteer = request.user.volunteer
+	form = VolunteerForm(instance=volunteer)
+	if request.method == 'POST':
+		form = VolunteerForm(request.POST, request.FILES, instance=volunteer)
+		if form.is_valid():
+			volunteer = form.save()
+			email = form.cleaned_data.get('email')
+			first_name = form.cleaned_data.get('first_name')
+			last_name = form.cleaned_data.get('last_name')
+			obj = Volunteer.objects.get(user__id=request.user.id)
+			obj.email = email
+			obj.first_name = first_name 
+			obj.last_name = last_name 
+			form.save()
+
+	context = {'form': form}
+	return render(request, 'hrm/account/personal_information.html', context)
 
 @login_required(login_url='login')
 def volunteerProfile(request):

@@ -81,7 +81,6 @@ def generateContract(request, event_id):
 	# 	return HttpResponseRedirect(reverse('event', args=(event.id,)))
 	if bool(contract_template):
 		template_path = contract_template[0].file
-		print(template_path)
 		savelocation_path = "static/files/contracte/test.docx"
 		contract_list = []
 		if bool(contracts): 

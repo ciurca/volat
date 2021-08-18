@@ -22,7 +22,7 @@ class Volunteer(models.Model):
     emitere_id = models.CharField("Emitere Buletin", blank=True, null=True, max_length=30)
     id_date = models.DateField("Date ID", blank=True, null=True)
     telephone_number = PhoneNumberField(null=True, blank=True)
-    profile_pic = models.ImageField(null=True, default="files/default-user-image.png", blank=True)
+    # profile_pic = models.ImageField(null=True, default="files/default-user-image.png", blank=True)
     # departments = models.ForeignKey("Department", on_delete=models.CASCADE, blank=True,  null=True) 
 
     def __str__(self):

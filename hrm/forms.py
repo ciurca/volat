@@ -45,4 +45,6 @@ class VolunteerForm(ModelForm):
         exclude = ['user']
         widgets = {
             'birth_date': DateInput(),
+            'id_date': DateInput(),
+
         }

@@ -1,0 +1,19 @@
+{% load static %}
+
+<div class="row gutters-sm">
+    <div class="col-md-4 d-none d-md-block">
+      <div class="card">
+        <div class="card-body">
+          <nav class="nav flex-column nav-pills nav-gap-y-1">
+            {% url 'account-personal_information' as url %}
+            <a href="{% url 'account-personal_information' %}" class="nav-item nav-link has-icon nav-link-faded {% if request.path == url %}active{% endif %}">
+              <i class="bi bi-person-lines-fill"></i> Personal Information
+            </a>
+            {% url 'account-change_password' as url %}
+            <a href="{% url 'account-change_password' %}" class="nav-item nav-link has-icon nav-link-faded {% if request.path == url %}active{% endif %}">
+              <i class="bi bi-shield"></i> Security
+            </a>
+          </nav>
+        </div>
+      </div>
+    </div>
