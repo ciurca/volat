@@ -80,6 +80,7 @@ def _generateContract(volunteer, template_path, savelocation_path, event, reques
 						event=event,
 					)
 					new_contract.file.save(f"Contract-{firstName}{lastName}{secrets.token_hex(3)}.docx", File(file_handle))
+				os.remove(save_location)
 				messages.success(request, 'Contract created succesfully!')
 				return HttpResponseRedirect(reverse('event', args=(event.id,)))
 	else:
@@ -104,7 +105,7 @@ def generateContract(request, event_id):
 	# 	return HttpResponseRedirect(reverse('event', args=(event.id,)))
 	if bool(contract_template):
 		template_path = contract_template[0].file
-		savelocation_path = "static/files/contracte/test.docx"
+		savelocation_path = f"static/files/contracte/contract{secrets.token_hex(3)}.docx"
 		contract_list = []
 		if bool(contracts): 
 			for contract in contracts:
