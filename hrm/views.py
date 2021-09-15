@@ -168,6 +168,7 @@ class EventView(generic.DetailView):
 		 try:
 			 vol_contracts = Contract.objects.all().filter(volunteer=self.volunteer.id)
 			 context['contract_list'] = vol_contracts.filter(event=context['event'].id)
+			 context['all_contracts'] = Contract.objects.all().filter(event=context['event'].id)
 		 except Contract.DoesNotExist:
 			 context['contract_list'] = None
 		 return context
