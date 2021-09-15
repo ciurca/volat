@@ -14,7 +14,7 @@
     {% endfor %}
 {% endif %}
 {% if user.is_staff %}
-<p>Total volunteers: {{event.volunteers.count}}</p>
+<p>Total volunteers: {{contract_list.count}}</p>
 <table class="table">
     <thead>
       <tr>
@@ -22,15 +22,17 @@
         <th scope="col">First</th>
         <th scope="col">Last</th>
         <th scope="col">Username</th>
+        <th scope="col">File</th>
       </tr>
     </thead>
     <tbody>
-    {% for volunteer in event.volunteers.all %}
+    {% for contract in contract_list %}
       <tr>
-        <th scope="row">{{volunteer.id}}</th>
-        <td>{{volunteer.first_name}}</td>
-        <td>{{volunteer.last_name}}</td>
-        <td>@{{volunteer.user}}</td>
+        <th scope="row">{{contract.volunteer.id}}</th>
+        <td>{{contract.volunteer.first_name}}</td>
+        <td>{{contract.volunteer.last_name}}</td>
+        <td>@{{contract.volunteer.user}}</td>
+        <td><a href="{{ contract.file.url }}" download><button class="btn btn-primary btn-sm">Download <i class="bi bi-download"></i></button></a></td>
       </tr>
     {% endfor %}
     </tbody>

@@ -18,7 +18,7 @@ class Volunteer(models.Model):
     domiciliu = models.CharField("Domiciliu", blank=True, null=True, max_length=100)
     cnp_id = models.DecimalField("Codul Numeric Personal", decimal_places=0, blank=True, null=True, max_digits=13)
     seria_id = models.CharField("Serie buletin", max_length=2, blank=True, null=True)
-    nr_serie_id = models.DecimalField("Număr serie buletin", blank=True, null=True,max_digits=6, decimal_places=0)
+    nr_serie_id = models.CharField("Număr serie buletin", blank=True, null=True, max_length=6)
     emitere_id = models.CharField("Emitere Buletin", blank=True, null=True, max_length=30)
     id_date = models.DateField("Dată emitere buletin", blank=True, null=True)
     telephone_number = PhoneNumberField("Număr de telefon", null=True, blank=True)
@@ -46,7 +46,7 @@ class Organizer(models.Model):
 class Event(models.Model):
     title = models.CharField(max_length=30)
     organizer = models.ForeignKey(Organizer, on_delete=models.CASCADE, null="Not Added", blank=True)
-    volunteers = models.ManyToManyField(Volunteer)
+    volunteers = models.ManyToManyField(Volunteer, blank=True)
     def __str__(self):
         return self.title
 
