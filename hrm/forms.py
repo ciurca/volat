@@ -65,7 +65,7 @@ class VolunteerForm(ModelForm):
 		self.fields['last_name'].help_text = "Exemplu: Moldovan"
 		self.fields['birth_place'].help_text = "Localitate în care te-ai născut. De exemplu: Târgu Mureș"
 		self.fields['adress'].help_text = "Adresa ta. Exemplu: Str. Trezită, nr 13B"
-		self.fields['parents'].help_text = "Numele părinților. De exemplu: Ion și Ana"
+		self.fields['parents'].help_text = "Prenumele părinților. De exemplu: Ion și Ana"
 		self.fields['domiciliu'].help_text = "Localitatea de domiciliu. De exemplu: Târgu-Mureș"
 		self.fields['emitere_id'].help_text = "De exemplu: SPCLEP Tg. Mureș"
 		self.fields['seria_id'].help_text = "De exemplu: MS"
