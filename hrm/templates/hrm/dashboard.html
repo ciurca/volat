@@ -51,7 +51,6 @@
         <div class="card-header"><i class="bi bi-building"></i> {{event.organizer}}</div>
         <div class="card-body">
             <h5 class="card-title">{{event.title}}</h5>
-            <p class="card-text">Total volunteers: {{event.volunteers.count}}</p>
             <a href="{% url 'event' event.id %}" class="btn btn-primary">More information</a>
         </div>
     </div>
