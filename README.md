@@ -4,3 +4,7 @@ Volat is a rudimentary volunteer administration tool created for very specific p
 
 
 Currently in [production](https://volat-hrm.herokuapp.com/).Go to [development branch](https://github.com/ciurca/volat/tree/development).
+
+# EDIT
+
+Not used anymore.
