@@ -1,4 +1,4 @@
-# Volat
+![Logo](https://github.com/ciurca/volat/blob/main/static/files/important/logo/default-monochrome-white.svg)
 
 Volat is a rudimentary volunteer administration tool created for very specific purposes. It is not for general use (yet) and it is definitely [not scalable](http://paulgraham.com/ds.html). Right now, it is not in production, but I've left some screnshots of the app.
 
