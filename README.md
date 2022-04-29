@@ -22,7 +22,7 @@ Volat is a rudimentary volunteer administration tool created for very specific p
 
 ### Personal Info
 
-![Personal Info](https://i.imgur.com/5OutwWJ.jpg)
+![Personal Info](https://i.imgur.com/f28WeRW.jpg)
 
 ### Security
 
@@ -31,3 +31,7 @@ Volat is a rudimentary volunteer administration tool created for very specific p
 ### Admin Panel
 
 ![Admin Panel](https://i.imgur.com/MnSQNE0.jpg)
+
+### Contract generation (video)
+
+[![Contract generation](https://res.cloudinary.com/marcomontalbano/image/upload/v1651214480/video_to_markdown/images/youtube--Ti9TWQ6gax4-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://www.youtube.com/watch?v=Ti9TWQ6gax4 "Contract generation")
